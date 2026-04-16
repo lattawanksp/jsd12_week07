@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1 id="jsdTag">JSD12</h1>
+    <button id="changeName" onclick="changeName()">
+      กดเพื่อเปลี่ยนชื่อกับเพิ่ม css คูลๆ
+    </button>
+    <script>
+      //เลือก Element มา
+      function changeName() {
+        const jsdTag = document.getElementById("jsdTag");
+        jsdTag.textContent = "Lin";
+        document.querySelector("#changeName").disabled = true;
+        document.querySelector("#changeName").textContent =
+          "เปลี่ยนชื่อเรียบร้อยแล้ว!";
+      }
+    </script>
+  </body>
+</html>
+
+เขียน Dom นับเลขว่าคลิกกี่ครั้ง ปุ่ม increase value
