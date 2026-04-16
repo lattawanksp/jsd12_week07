@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const pokeContainer = document.getElementById("pokemon-container");
+
+      // fetch("https://pokeapi.co/api/v2/pokemon/")
+      //   .then((response) => response.json())
+      //   .then((data) => {
+      //     console.log(data);
+      //     const newDiv = document.createElement("div");
+      //     const pokeName = document.createElement("h3");
+      //     pokeName.textContent = data.name;
+
+      //     const pokeIMG = document.createElement("img");
+      //     pokeIMG.src = data.sprites.front_default;
+      //     pokeContainer.appendChild(pokeName);
+      //     pokeContainer.appendChild(pokeIMG);
+      //   });
+
+      const fetchBtn = document.getElementById("findPoke");
+
+      fetchBtn.addEventListener("click", () => {
+        const inputPoke = document.getElementById("pokename");
+        const pokemoName = inputPoke.value;
+        console.log(pokemoName);
+        fetch(`https://pokeapi.co/api/v2/pokemon/${inputPoke.value}`)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            const newDiv = document.createElement("div");
+            const pokeName = document.createElement("h3");
+            pokeName.textContent = data.name;
+
+            const pokeIMG = document.createElement("img");
+            pokeIMG.src = data.sprites.front_default;
+            pokeContainer.appendChild(pokeName);
+            pokeContainer.appendChild(pokeIMG);
+          });
+      });
+
+      d;
+    </script>
+  </body>
+</html>
