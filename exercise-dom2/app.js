@@ -30,12 +30,20 @@ function renderPokemon(pokemonData) {
   img.src = pokemonData.sprites.front_default;
   img.alt = pokemonData.name;
 
-  const name = document.createElement("name");
+  const name = document.createElement("p");
   name.innerText = pokemonData.name;
 
+  const type = document.createElement("p");
+  type.innerText = pokemonData.types[0].type.name;
+
+  const order = document.createElement("span");
+  order.innerText = pokemonData.order;
+
+  container.appendChild(card);
   card.appendChild(img);
   card.appendChild(name);
-  container.appendChild(card);
+  card.appendChild(type);
+  card.appendChild(order);
 }
 
 function removeLastPokemon() {
