@@ -60,13 +60,15 @@
     <!--HTML-->
     <div id="catContainer">
       <h1>Cat Clicker</h1>
-      <h2>Toramaru แมวส้มที่กำลังสะสมลูกน้องแมวเพื่อเตรียมครองโลก</h2>
+      <h2>Chanom แมวส้มที่กำลังสะสมลูกน้องแมวเพื่อเตรียมครองโลก</h2>
       <p id="scoreShow">Meow : <span id="score">0</span></p>
       <p id="perSecShow">Per second: <span id="cps">0</span></p>
 
-      <h2 id="crownIcon" style="display: none">👑</h2>
-      <button id="catBtn">😺</button>
-      <h1>แมวส้มจ่าฝูง</h1>
+      <div id="catArea" style="position: relative">
+        <h2 id="crownIcon" style="display: none">👑</h2>
+        <button id="catBtn">😺</button>
+        <h1 id="catTitle">แมวส้ม</h1>
+      </div>
     </div>
 
     <hr />
@@ -80,7 +82,7 @@
     <h2>Level Up แมว</h2>
     <div class="shop-item">
       <p>อัพเกรดเป็น King Cat</p>
-      <button id="buyCrownBtn" disabled>30 Meow (Click x2)</button>
+      <button id="buyCrownBtn" disabled>500 Meow (Click +10)</button>
     </div>
 
     <!--JS-->
@@ -89,9 +91,9 @@
       let Fcat = 0;
       const Fcat_Cost = 20;
       const Fcat_CPS = 1;
-      //อัพเกรดซื้อมงกุฏ
-      const Crown_Cost = 30;
+      const Crown_Cost = 500;
       let crownBought = false;
+      let clickPower = 1; //อัพเกรดซื้อมง
       let multiplier = 1; //เอามารับตัวแปรที่คูณตอนเลเวลอัพ
 
       const catBtn = document.getElementById("catBtn");
@@ -115,7 +117,7 @@
 
       // อัปเดต UI ทุกครั้งที่ score เปลี่ยน
       function oneClick() {
-        score += 1 * multiplier;
+        score += 1 * clickPower;
         updateUI();
       }
 
@@ -123,6 +125,23 @@
         if (score >= Fcat_Cost) {
           score -= Fcat_Cost;
           Fcat += 1;
+
+          if (!crownBought) {
+            // ให้มีผลตอนที่ยังไม่ได้ซื้อมง
+            if (Fcat >= 50) {
+              document.getElementById("catTitle").textContent =
+                "แมวส้มจ่าฝูง 🌟";
+            } else if (Fcat >= 30) {
+              document.getElementById("catTitle").textContent =
+                "แมวส้มผู้นำหมู่บ้าน ⭐️";
+            } else if (Fcat >= 10) {
+              document.getElementById("catTitle").textContent =
+                "แมวส้มผู้นำซอย 🚩";
+            }
+          }
+
+          randomCatCrews();
+
           updateUI();
         }
       }
@@ -131,12 +150,41 @@
         if (!crownBought && score >= Crown_Cost) {
           score -= Crown_Cost;
           crownBought = true;
-          multiplier = 2;
+          clickPower = 10;
+
           document.getElementById("crownIcon").style.display = "block";
-          buyCrownBtn.style.display = "none"; //กดซื้อแล้วหายไปเลย
+          document.getElementById("catTitle").textContent =
+            "👑 The King of แมวส้ม ! 👑";
+          document.getElementById("catTitle").style.color = "#d4af37";
+          document.getElementById("catBtn").textContent = "😼";
+
+          buyCrownBtn.textContent = "👑 Upgraded!";
           updateUI();
         }
       }
+
+      //////////////เอาไว้แรนด้อมตำแหน่งแมวบนหน้าจอ
+
+      const catCrews = ["😸", "😹", "😻", "😽", "🙀", "😿", "😾"];
+
+      function randomCatCrews() {
+        const area = document.getElementById("catArea");
+        const newCat = document.createElement("span");
+
+        const randomIcon =
+          catCrews[Math.floor(Math.random() * catCrews.length)];
+        newCat.textContent = randomIcon;
+
+        newCat.style.position = "absolute";
+        newCat.style.fontSize = "2rem";
+        const randomX = Math.floor(Math.random() * 90);
+        const randomY = Math.floor(Math.random() * 90);
+        newCat.style.left = randomX + "%";
+        newCat.style.top = randomY + "%";
+
+        area.appendChild(newCat);
+      }
+      ///////////////////////////////////////
 
       // Auto clicker
       setInterval(function () {
