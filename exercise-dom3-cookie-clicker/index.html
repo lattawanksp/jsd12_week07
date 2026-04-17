@@ -34,13 +34,22 @@
         font-size: 3rem;
       }
 
-      #shop {
+      .shop-item {
         border: 2px solid #ff8119;
         background-color: white;
         width: 300px;
         box-sizing: border-box;
-        gap: 10px;
+        padding: 15px;
         margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #crownIcon {
+        margin-bottom: -100px;
+        margin-top: 10px;
+        font-size: 8rem;
       }
     </style>
 
@@ -51,20 +60,27 @@
     <!--HTML-->
     <div id="catContainer">
       <h1>Cat Clicker</h1>
-      <p id="scoreShow">Meow: <span id="score">0</span></p>
+      <h2>Toramaru แมวส้มที่กำลังสะสมลูกน้องแมวเพื่อเตรียมครองโลก</h2>
+      <p id="scoreShow">Meow : <span id="score">0</span></p>
       <p id="perSecShow">Per second: <span id="cps">0</span></p>
+
+      <h2 id="crownIcon" style="display: none">👑</h2>
       <button id="catBtn">😺</button>
+      <h1>แมวส้มจ่าฝูง</h1>
     </div>
 
-    <h2>Upgrade Shop</h2>
-    <div id="shop">
-      <div id="buyFcatBox">
-        <p>😽 เรียกเพื่อนแมวส้ม</p>
-        <button id="buyFcatBtn" disabled>
-          20 Meow <small> (+1/sec)</small>
-        </button>
-        <p>owned: <span id="CountFcat">0</span></p>
-      </div>
+    <hr />
+    <h2>เพิ่มลูกน้องแมว</h2>
+    <div class="shop-item">
+      <p>เรียกลูกน้อง 1 แมว</p>
+      <button id="buyFcatBtn" disabled>20 Meow (Auto +1 / sec)</button>
+      <p>owned: <span id="CountFcat">0</span></p>
+    </div>
+
+    <h2>Level Up แมว</h2>
+    <div class="shop-item">
+      <p>อัพเกรดเป็น King Cat</p>
+      <button id="buyCrownBtn" disabled>30 Meow (Click x2)</button>
     </div>
 
     <!--JS-->
@@ -73,25 +89,33 @@
       let Fcat = 0;
       const Fcat_Cost = 20;
       const Fcat_CPS = 1;
+      //อัพเกรดซื้อมงกุฏ
+      const Crown_Cost = 30;
+      let crownBought = false;
+      let multiplier = 1; //เอามารับตัวแปรที่คูณตอนเลเวลอัพ
 
       const catBtn = document.getElementById("catBtn");
       const scoreDisplay = document.getElementById("score");
       const cpsDisplay = document.getElementById("cps");
       const buyBtn = document.getElementById("buyFcatBtn");
       const countFcatDisplay = document.getElementById("CountFcat");
+      //อัพเกรดซื้อมงกุฏ
+      const buyCrownBtn = document.getElementById("buyCrownBtn");
 
       function updateUI() {
         scoreDisplay.textContent = Math.floor(score);
-        cpsDisplay.textContent = Fcat * Fcat_CPS;
+        cpsDisplay.textContent = Fcat * Fcat_CPS * multiplier;
         countFcatDisplay.textContent = Fcat;
 
         // ปลดล็อคปุ่มถ้าคะแนนพอ
         buyBtn.disabled = score < Fcat_Cost;
+        // ปุ่ม crown: ปลดล็อคเมื่อมีคะแนนพอ และยังไม่เคยซื้อ
+        buyCrownBtn.disabled = score < Crown_Cost;
       }
 
       // อัปเดต UI ทุกครั้งที่ score เปลี่ยน
       function oneClick() {
-        score += 1;
+        score += 1 * multiplier;
         updateUI();
       }
 
@@ -99,6 +123,17 @@
         if (score >= Fcat_Cost) {
           score -= Fcat_Cost;
           Fcat += 1;
+          updateUI();
+        }
+      }
+
+      function buyCrownUpgrade() {
+        if (!crownBought && score >= Crown_Cost) {
+          score -= Crown_Cost;
+          crownBought = true;
+          multiplier = 2;
+          document.getElementById("crownIcon").style.display = "block";
+          buyCrownBtn.style.display = "none"; //กดซื้อแล้วหายไปเลย
           updateUI();
         }
       }
@@ -111,6 +146,7 @@
 
       catBtn.addEventListener("click", oneClick);
       buyBtn.addEventListener("click", buyFcatUpgrade);
+      buyCrownBtn.addEventListener("click", buyCrownUpgrade);
     </script>
   </body>
 </html>
