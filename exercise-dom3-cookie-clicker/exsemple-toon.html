@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // object นี้ใช้เก็บ "สถานะปัจจุบันของเกม"
+      // ทุกครั้งที่ผู้เล่นคลิกหรือซื้ออัปเกรด ค่าด้านในนี้จะเปลี่ยน
+      // แล้วเราค่อยเอาค่าเหล่านี้ไปแสดงบนหน้าเว็บอีกที
+      const state = {
+        // จำนวนคุกกี้ที่ผู้เล่นมีอยู่ตอนนี้
+        cookies: 0,
+
+        // จำนวนคุกกี้ที่ได้จากการคลิก 1 ครั้ง
+        clickPower: 1,
+
+        // จำนวนคุกกี้ที่ระบบเพิ่มให้อัตโนมัติทุก 1 วินาที
+        autoPower: 0,
+
+        // ราคาปัจจุบันของการอัปเกรดแบบเพิ่มพลังคลิก
+        clickUpgradeCost: 10,
+
+        // ราคาปัจจุบันของการอัปเกรดแบบเพิ่มคุกกี้อัตโนมัติ
+        autoUpgradeCost: 25,
+      };
+
+      // ดึง element จากหน้า HTML มาเก็บไว้ในตัวแปร
+      // เพื่อที่เราจะได้เรียกใช้งานซ้ำได้ง่าย ไม่ต้อง query ใหม่หลายรอบ
+      const cookieCount = document.getElementById("cookie-count");
+      const clickPower = document.getElementById("click-power");
+      const autoPower = document.getElementById("auto-power");
+      const cookieButton = document.getElementById("cookie-button");
+      const buyClickButton = document.getElementById("buy-click");
+      const buyAutoButton = document.getElementById("buy-auto");
+
+      // ฟังก์ชันนี้มีหน้าที่อัปเดตข้อมูลบนหน้าจอ
+      // หลักการคือ: อ่านค่าจาก state แล้วเอาไปใส่ใน element ต่าง ๆ
+      // เวลาข้อมูลในเกมเปลี่ยน เราจะเรียก render() เพื่อให้หน้าจอแสดงค่าล่าสุด
+      function render() {
+        // แสดงจำนวนคุกกี้ที่มีอยู่ตอนนี้
+        cookieCount.textContent = `Cookies: ${state.cookies}`;
+
+        // แสดงว่าคลิก 1 ครั้ง ได้กี่คุกกี้
+        clickPower.textContent = `Click power: ${state.clickPower}`;
+
+        // แสดงว่าระบบผลิตคุกกี้ให้อัตโนมัติกี่ชิ้นต่อวินาที
+        autoPower.textContent = `Auto cookies: ${state.autoPower} / sec`;
+
+        // อัปเดตข้อความบนปุ่มซื้ออัปเกรดคลิก
+        // เพื่อให้เห็นราคาปัจจุบันของอัปเกรดนี้
+        buyClickButton.textContent = `Buy click upgrade (${state.clickUpgradeCost})`;
+
+        // อัปเดตข้อความบนปุ่มซื้ออัปเกรดอัตโนมัติ
+        // เพื่อให้เห็นราคาปัจจุบันของอัปเกรดนี้
+        buyAutoButton.textContent = `Buy auto clicker (${state.autoUpgradeCost})`;
+
+        // ถ้าคุกกี้มีน้อยกว่าราคาอัปเกรดคลิก จะกดซื้อไม่ได้
+        // ปุ่มจะถูก disable ไปก่อนจนกว่าจะมีคุกกี้พอ
+        buyClickButton.disabled = state.cookies < state.clickUpgradeCost;
+
+        // ถ้าคุกกี้มีน้อยกว่าราคาอัปเกรดอัตโนมัติ จะกดซื้อไม่ได้เหมือนกัน
+        buyAutoButton.disabled = state.cookies < state.autoUpgradeCost;
+      }
+
+      // เมื่อผู้เล่นกดปุ่มคุกกี้หลัก
+      // ให้เพิ่มคุกกี้ตามค่าพลังคลิกที่มีอยู่ตอนนี้
+      cookieButton.addEventListener("click", () => {
+        // เช่น ถ้า clickPower เป็น 1 ก็จะเพิ่ม 1
+        // ถ้าอัปเกรดไปแล้ว clickPower เป็น 3 ก็จะเพิ่มครั้งละ 3
+        state.cookies += state.clickPower;
+
+        // หลังจากข้อมูลเปลี่ยน ต้องเรียก render เพื่ออัปเดตหน้าจอ
+        render();
+      });
+
+      // เมื่อผู้เล่นกดปุ่มซื้ออัปเกรดคลิก
+      buyClickButton.addEventListener("click", () => {
+        // เช็กก่อนว่าคุกกี้พอจ่ายหรือไม่
+        // ถ้าไม่พอ ให้หยุดตรงนี้เลย ไม่ต้องทำคำสั่งต่อ
+        if (state.cookies < state.clickUpgradeCost) {
+          return;
+        }
+
+        // ถ้าคุกกี้พอ ให้หักราคาของอัปเกรดออกจากจำนวนคุกกี้
+        state.cookies -= state.clickUpgradeCost;
+
+        // เพิ่มพลังคลิกขึ้น 1
+        // หมายความว่าหลังจากนี้คลิก 1 ครั้งจะได้คุกกี้มากขึ้น
+        state.clickPower += 1;
+
+        // ทำให้ราคาของอัปเกรดครั้งถัดไปแพงขึ้น
+        // เพื่อไม่ให้ซื้ออัปเกรดได้ง่ายเกินไปเรื่อย ๆ
+        state.clickUpgradeCost += 10;
+
+        // อัปเดตหน้าจอให้แสดงค่าล่าสุด
+        render();
+      });
+
+      // เมื่อผู้เล่นกดปุ่มซื้ออัปเกรดอัตโนมัติ
+      buyAutoButton.addEventListener("click", () => {
+        // เช็กก่อนว่าคุกกี้พอจ่ายหรือไม่
+        if (state.cookies < state.autoUpgradeCost) {
+          return;
+        }
+
+        // หักราคาของอัปเกรดออกจากคุกกี้ที่มีอยู่
+        state.cookies -= state.autoUpgradeCost;
+
+        // เพิ่มค่าคุกกี้อัตโนมัติ 1 หน่วย
+        // หมายความว่าในทุก 1 วินาที เกมจะเพิ่มคุกกี้ให้มากขึ้น
+        state.autoPower += 1;
+
+        // ทำให้ราคาอัปเกรดอัตโนมัติครั้งถัดไปแพงขึ้น
+        state.autoUpgradeCost += 20;
+
+        // อัปเดตหน้าจอหลังจากข้อมูลเปลี่ยน
+        render();
+      });
+
+      // setInterval ใช้สั่งให้โค้ดด้านในทำงานซ้ำ ๆ ตามเวลาที่กำหนด
+      // ในที่นี้กำหนดไว้ 1000 มิลลิวินาที หรือก็คือ 1 วินาที
+      window.setInterval(() => {
+        // ทุก 1 วินาที ให้เพิ่มคุกกี้ตามค่า autoPower
+        // ถ้า autoPower เป็น 0 ก็จะไม่ได้อะไรเพิ่ม
+        // ถ้า autoPower เป็น 2 ก็จะได้เพิ่มครั้งละ 2 ทุกวินาที
+        state.cookies += state.autoPower;
+
+        // หลังจากจำนวนคุกกี้เปลี่ยน ก็ต้องแสดงผลใหม่
+        render();
+      }, 1000);
+
+      // เรียก render ครั้งแรกตอนเปิดหน้าเว็บ
+      // เพื่อให้ข้อมูลเริ่มต้นใน state ถูกแสดงออกมาทันที
+      render();
+    </script>
+  </body>
+</html>

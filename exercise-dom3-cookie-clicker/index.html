@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--CSS-->
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding: 2rem;
+        background: #fff8f0;
+      }
+
+      #catBtn {
+        font-size: 15rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+
+      #catBtn:active {
+        transform: scale(0.9);
+      }
+
+      #scoreShow {
+        font-size: 3rem;
+      }
+    </style>
+
+    <title>Cat Clicker</title>
+  </head>
+  <body>
+    <!--HTML-->
+    <div id="catContainer">
+      <h1>Cat Clicker</h1>
+      <p id="scoreShow">Meow: <span id="score">0</span></p>
+      <button id="catBtn">😺</button>
+    </div>
+
+    <!--JS-->
+    <script>
+      let score = 0;
+
+      const catBtn = document.getElementById("catBtn");
+      const scoreDisplay = document.getElementById("score");
+
+      function oneClick() {
+        score += 1;
+        scoreDisplay.textContent = score;
+      }
+
+      catBtn.addEventListener("click", oneClick);
+    </script>
+  </body>
+</html>
